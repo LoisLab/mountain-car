@@ -1,11 +1,13 @@
 import sys
 import numpy as np
 
+''' tiny RL environment for the door opening problem '''
+''' note that size of state space is 2^n             '''
 class Env:
-  def __init__(self,n):
+  def __init__(self,n):            # n = number of doors
     self.n = n
   def reset(self):
-    self.doors = np.zeros(self.n) # all doors are closed
+    self.doors = np.zeros(self.n)  # all doors are closed
     self.count = 0
     return self.n_state()
   def step(self,action):
@@ -19,24 +21,22 @@ class Env:
   def sample(self):
     return np.random.randint(self.n)
 
-# run from commmand line using something like: python doors 4 1000
+''' train to open all the doors, using: python doors n epsodes '''
+''' to try four doors over 1000 episodes, it's: python 4 1000  '''
 n = int(sys.argv[1])
 env = Env(n)
-q = np.zeros((2**n,n))  # generally: don't use zeros! see post
-epsilon = 0.5
+q = np.zeros((2**n,n))  # generally: don't use zeros! see post...
+explore = 0.5
 for n in range(int(sys.argv[2])):
   state = env.reset()
   done = False
-  total_reward = 0
   while not done:
-    if np.random.random() < epsilon:
-      action = env.sample()
+    if np.random.random() < explore:
+      action = env.sample()                   # explore
     else:
-      action = np.argmax(q[state])
+      action = np.argmax(q[state])            # exploit
     obs,reward,done,count = env.step(action)
-    total_reward += reward
-    q[state][action] = reward+np.max(q[obs])
+    q[state][action] = reward+np.max(q[obs])  # only store most recent result
     state = obs
-  epsilon *= 0.5
+  explore *= 0.5
 print(q)
-
