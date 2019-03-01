@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 #                                                                              #
 ################################################################################
 
-iters = 100000     # total episodes
+iters = 10000     # total episodes
 
 env=gym.make('MountainCar-v0')
 n = 8 # arbitrary number of boundaries to discretize observation
@@ -19,7 +19,8 @@ limits = (env.observation_space.high-env.observation_space.low, env.observation_
 def discrete(obs,n):
     return np.round(((obs-limits[1])/limits[0])*n).astype(int)
 
-max_positions = []                          # buffer for graphing results
+mean_result, max_result, min_result = [],[],[]
+
 recent = np.zeros((100))                    # buffer for computing recent mean
 
 for i in range(iters):
@@ -37,10 +38,15 @@ for i in range(iters):
 
     ''' just reporting results from here on '''
     recent[i%100] = max_pos
-    if i>=100: max_positions.append(np.mean(recent))
-    if i%1000==0: print('episode {:d}, max pos {:3.2f}, avg max(last 100) {:3.2f}'.
-                  format(i,max_pos,np.mean(recent)))
+    if i>=100:
+        mean_result.append(np.mean(recent))
+        max_result.append(np.max(recent))
+        min_result.append(np.min(recent))
+    if i%1000==0: print('episode {:d}, max {:3.2f}, max-100 {:3.2f} mean-100 {:3.2f} min-100 {:3.2f}'.
+                  format(i,max_pos,np.max(recent),np.mean(recent),np.min(recent)))
 
-plt.plot(max_positions)
+plt.plot(mean_result)
+plt.plot(max_result)
+plt.plot(min_result)
 plt.title('episodes = ' + str(iters))
 plt.show()
