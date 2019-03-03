@@ -3,11 +3,11 @@ import numpy as np
 import matplotlib as mpl # special magic for repl.it
 import matplotlib.pyplot as plt
 
-################################################################################
-#                                                                              #
-#  Straightforward Q-learning applied to OpenAI MountainCar-v0 (Moore 1990)    #
-#                                                                              #
-################################################################################
+##############################################################
+#                                                            #
+# OpenAI MountainCar-v0 (Moore 1990) -- argmax() only        #
+#                                                            #
+##############################################################
 
 #alpha = 0.02     # no alpha term -- learning rate is 1.0
 #gamma = 0.90     # don't discount future rewards
@@ -26,20 +26,20 @@ limits = (env.observation_space.high-env.observation_space.low, env.observation_
 def discrete(obs,n):
     return np.round(((obs-limits[1])/limits[0])*n).astype(int)
 
-max_positions = []                          # buffer for graphing results
-recent = np.zeros((100))                    # buffer for computing recent mean
+max_positions = []                        
+recent = np.zeros((100))                  
 
 for i in range(iters):
     max_pos = -float('inf')
-    ds = discrete(env.reset(),n)            # discrete starting state (m,n)
+    ds = discrete(env.reset(),n)      
     done = False
     while not done:
-        action = np.argmax(q[ds[0],ds[1]])  # exploit
+        action = np.argmax(q[ds[0],ds[1]])      # argmax only!
         obs,reward,done,_ = env.step(action)
-        max_pos = max(max_pos,obs[0])           # progress... for graph at end
-        do = discrete(obs,n)                    # discrete observation (m,n)
+        max_pos = max(max_pos,obs[0])         
+        do = discrete(obs,n)                    
         q[ds[0],ds[1],action] = reward+np.max(q[do[0],do[1]])
-        ds = do                                 # use obs as next starting state
+        ds = do                               
         if render and i%1000==0: env.render()
 
     ''' just reporting results from here on '''
