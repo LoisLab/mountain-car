@@ -10,7 +10,7 @@ decay = 0.99995
 iters = 50000
 
 env=gym.make('MountainCar-v0')
-n = 12 # arbitrary number of boundaries to discretive observation
+n = 12 # arbitrary number of boundaries to discretize observation
 q = np.random.uniform(low=-1,high=1,size=(n+1,n+1,env.action_space.n))
 limits = (env.observation_space.high-env.observation_space.low, env.observation_space.low)
 
