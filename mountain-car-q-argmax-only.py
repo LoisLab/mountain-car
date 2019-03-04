@@ -26,27 +26,27 @@ limits = (env.observation_space.high-env.observation_space.low, env.observation_
 def discrete(obs,n):
     return np.round(((obs-limits[1])/limits[0])*n).astype(int)
 
-max_positions = []                        
-recent = np.zeros((100))                  
+max_positions = []
+recent = np.zeros((100))
 
 for i in range(iters):
     max_pos = -float('inf')
-    ds = discrete(env.reset(),n)      
+    ds = discrete(env.reset(),n)
     done = False
     while not done:
         action = np.argmax(q[ds[0],ds[1]])      # argmax only!
         obs,reward,done,_ = env.step(action)
-        max_pos = max(max_pos,obs[0])         
-        do = discrete(obs,n)                    
+        max_pos = max(max_pos,obs[0])
+        do = discrete(obs,n)
         q[ds[0],ds[1],action] = reward+np.max(q[do[0],do[1]])
-        ds = do                               
+        ds = do
         if render and i%1000==0: env.render()
 
     ''' just reporting results from here on '''
     recent[i%100] = max_pos
     if i>=100: max_positions.append(np.mean(recent))
-    if i%1000==0: print('episode {:d}, max pos {:3.2f}, avg max(last 100) {:3.2f}'.
-                  format(i,max_pos,np.mean(recent)))
+    if i%100==0: print('episode {:d}, max pos {:3.2f}, avg max(last 100) {:3.2f}'.
+                 format(i,max_pos,np.mean(recent)))
 
 plt.plot(max_positions)
 plt.title('argmax only n {:d} episodes {:d}'.format(n,iters))

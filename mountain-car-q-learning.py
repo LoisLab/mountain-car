@@ -40,7 +40,8 @@ for i in range(iters):
 
   recent[i%100] = max_pos                   # results for graph
   if i>=100: max_positions.append(np.mean(recent))
-  if i%100==0: print(i)
+  if i%100==0: print('episode {:d}, max pos {:3.2f}, avg max(last 100) {:3.2f}'.
+    format(i,max_pos,np.mean(recent)))
 
 plt.plot(max_positions)
 plt.title('alpha = ' + str(alpha) + ' n = ' + str(n) + ' episodes = ' + str(iters))
